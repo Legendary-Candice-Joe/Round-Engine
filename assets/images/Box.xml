@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Box.png">
+	<!-- Created with Adobe Animate version 22.0.4.185 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Tick0000" x="0" y="0" width="90" height="70" frameX="-17" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0001" x="90" y="0" width="101" height="70" frameX="-6" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0002" x="191" y="0" width="102" height="70" frameX="-5" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0003" x="293" y="0" width="104" height="70" frameX="-3" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0004" x="397" y="0" width="106" height="70" frameX="-1" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0005" x="0" y="70" width="104" height="70" frameX="-3" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0006" x="104" y="70" width="105" height="70" frameX="-2" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0007" x="209" y="70" width="107" height="70"/>
+	<SubTexture name="Tick0008" x="316" y="70" width="102" height="70" frameX="-5" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0009" x="0" y="140" width="99" height="70" frameX="-8" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0010" x="99" y="140" width="102" height="70" frameX="-5" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Tick0011" x="201" y="140" width="99" height="70" frameX="-8" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0000" x="201" y="140" width="99" height="70" frameX="-8" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0001" x="99" y="140" width="102" height="70" frameX="-5" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0002" x="0" y="140" width="99" height="70" frameX="-8" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0003" x="316" y="70" width="102" height="70" frameX="-5" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0004" x="209" y="70" width="107" height="70"/>
+	<SubTexture name="Untick0005" x="104" y="70" width="105" height="70" frameX="-2" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0006" x="0" y="70" width="104" height="70" frameX="-3" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0007" x="397" y="0" width="106" height="70" frameX="-1" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0008" x="293" y="0" width="104" height="70" frameX="-3" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0009" x="191" y="0" width="102" height="70" frameX="-5" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0010" x="90" y="0" width="101" height="70" frameX="-6" frameY="0" frameWidth="107" frameHeight="70"/>
+	<SubTexture name="Untick0011" x="0" y="0" width="90" height="70" frameX="-17" frameY="0" frameWidth="107" frameHeight="70"/>
+</TextureAtlas>
