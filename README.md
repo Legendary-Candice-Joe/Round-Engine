@@ -4,7 +4,7 @@ This is Round Engine! A new engine for friday night funkin'.
 
 # Features
 
-1. First of all, it has a crap load of features straight of the bat. It has a full options menu that catagorises all of the options really well! including an offset menu.
+1. First of all, it has a crap load of features straight off the bat. It has a full options menu that catagorises all of the options really well! including an offset menu.
 
 2. It has 3 seperate offset settings: Audio Offset (so audio aligns with chart), Input/Judgement Offset (changes scores based on input delay), And visual offset (for screen lag).
 
@@ -32,7 +32,7 @@ Now this is based off of the slightly older than the latest version of the base 
 
 4. By pressing X / Z you can change grid zoom. WHICH, unlike psych engine, allows triplets.
 
-5. Change ui box thing from the left to the right of the screen.
+5. Change ui box thing from the right to the left of the screen.
 
 # Why?
 
