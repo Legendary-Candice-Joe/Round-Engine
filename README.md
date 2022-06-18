@@ -1,92 +1,39 @@
-# Friday Night Funkin
+# Round Engine
 
-This is the repository for Friday Night Funkin, a game originally made for Ludum Dare 47 "Stuck In a Loop".
+This is Round Engine! A new engine for friday night funkin'.
 
-Play the Ludum Dare prototype here: https://ninja-muffin24.itch.io/friday-night-funkin
-Play the Newgrounds one here: https://www.newgrounds.com/portal/view/770371
-Support the project on the itch.io page: https://ninja-muffin24.itch.io/funkin
+# Features
 
-## Credits / shoutouts
+1. First of all, it has a crap load of features straight of the bat. It has a full options menu that catagorises all of the options really well! including an offset menu.
 
-- [ninjamuffin99 (me!)](https://twitter.com/ninja_muffin99) - Programmer
-- [PhantomArcade3K](https://twitter.com/phantomarcade3k) and [Evilsk8r](https://twitter.com/evilsk8r) - Art
-- [Kawaisprite](https://twitter.com/kawaisprite) - Musician
+2. It has 3 seperate offset settings: Audio Offset (so audio aligns with chart), Input/Judgement Offset (changes scores based on input delay), And visual offset (for screen lag).
 
-This game was made with love to Newgrounds and it's community. Extra love to Tom Fulp.
+3. It has 4 keysets: 4k, 6k, 8k, 9k. (with proper keybinds!!)
 
-## Build instructions
+4. It allows toggling between ghost tapping, botplay, and accuracy system mid game.
 
-THESE INSTRUCTIONS ARE FOR COMPILING THE GAME'S SOURCE CODE!!!
+5. It also allows changing the amount of keys mid game. (so you can go from 4 to 9 keys if you want).
 
-IF YOU WANT TO JUST DOWNLOAD AND INSTALL AND PLAY THE GAME NORMALLY, GO TO ITCH.IO TO DOWNLOAD THE GAME FOR PC, MAC, AND LINUX!!
+6. Thorns ummmm.... doesn't work....
 
-https://ninja-muffin24.itch.io/friday-night-funkin
+7. All the standard crap: Downscroll, Ghost Tapping, FPS cap, pretty much anything from psych/kade engine.
 
-IF YOU WANT TO COMPILE THE GAME YOURSELF, CONTINUE READING!!!
+8. Custom and reliable input system known only as round input.
 
-### Installing shit
+# Charting Features
 
-First you need to install Haxe and HaxeFlixel. I'm too lazy to write and keep updated with that setup (which is pretty simple). 
-The link to that is on the [HaxeFlixel website](https://haxeflixel.com/documentation/getting-started/)
+Now this is based off of the slightly older than the latest version of the base game. With a few features taken from psych engine, but the chart editor is a bit primitave. HOWEVER! I will still list a couple things.
 
-Other installations you'd need is the additional libraries, a fully updated list will be in `Project.xml` in the project root, but here are the one's I'm using as of writing.
+1. Hold notes have matching colours
 
-```
-hscript
-flixel-ui
-newgrounds
-```
+2. Changing keys mid song (listed earlier)
 
-So for each of those type `haxelib install [library]` so shit like `haxelib install newgrounds`
+3. New chart system (still compatible with old charts). Just untick the legacy chart system box.
 
-You'll also need to install polymod. Do this with 
+4. By pressing X / Z you can change grid zoom. WHICH, unlike psych engine, allows triplets.
 
-```
-haxelib git polymod https://github.com/larsiusprime/polymod.git
-```
+5. Change ui box thing from the left to the right of the screen.
 
-### Ignored files
+# Why?
 
-I gitignore the API keys for the game, so that no one can nab them and post fake highscores on the leaderboards. But because of that the game
-doesn't compile without it.
-
-Just make a file in `/source` and call it `APIStuff.hx`, and copy paste this into it
-
-```haxe
-package;
-
-class APIStuff
-{
-	public static var API:String = "";
-	public static var EncKey:String = "";
-}
-
-```
-
-and you should be good to go there.
-
-### Compiling game
-
-Once you have all those installed, it's pretty easy to compile the game. You just need to run 'lime test html5 -debug' in the root of the project to build and run the HTML5 version. (command prompt navigation guide can be found here: [https://ninjamuffin99.newgrounds.com/news/post/1090480](https://ninjamuffin99.newgrounds.com/news/post/1090480))
-
-To run it from your desktop (Windows, Mac, Linux) it can be a bit more involved. For Linux, you only need to open a terminal in the project directory and run 'lime test linux -debug' and then run the executible file in export/release/linux/bin. For Windows, you need to install Visual Studio Community 2019. While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
-* MSVC v142 - VS 2019 C++ x64/x86 build tools
-* Windows SDK (10.0.17763.0)
-* C++ Profiling tools
-* C++ CMake tools for windows
-* C++ ATL for v142 build tools (x86 & x64)
-* C++ MFC for v142 build tools (x86 & x64)
-* C++/CLI support for v142 build tools (14.21)
-* C++ Modules for v142 build tools (x64/x86)
-* Clang Compiler for Windows
-* Windows 10 SDK (10.0.17134.0)
-* Windows 10 SDK (10.0.16299.0)
-* MSVC v141 - VS 2017 C++ x64/x86 build tools
-* MSVC v140 - VS 2015 C++ build tools (v14.00)
-
-This will install about 22GB of crap, but once that is done you can open up a command line in the project's directory and run `lime test windows -debug`. Once that command finishes (it takes forever even on a higher end PC), you can run FNF from the .exe file under export\release\windows\bin
-As for Mac, 'lime test mac -debug' should work, if not the internet surely has a guide on how to compile Haxe stuff for Mac.
-
-### Additional guides
-
-- [Command line basics](https://ninjamuffin99.newgrounds.com/news/post/1090480)
+This started out as a joke, but I figured this sorta- has a chance at working. Tho IK this won't get any bit popular. Do I care tho? no.
