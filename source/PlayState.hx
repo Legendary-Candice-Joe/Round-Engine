@@ -1969,7 +1969,7 @@ class PlayState extends MusicBeatState
 					completeGarbage = (-0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
 				}
 				
-				daNote.y = (completeGarbage * marY) + strumLine.y;
+				daNote.y = (completeGarbage * marY) + strumLine.y + (Downscroll ? VSD : -VSD);
 				
 				if (daNote.isEndHold){ //so no weird gaps
 					var noPls:Float = (endNotePositions[curK] / (Conductor.bpm / 64)) * SONG.speed;
@@ -1980,7 +1980,7 @@ class PlayState extends MusicBeatState
 				// WIP interpolation shit? Need to fix the pause issue
 				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
 				
-				if (daNote.y < -daNote.height && !Downscroll && daNote.mustPress)
+				if (daNote.y < -daNote.height - VSD && !Downscroll && daNote.mustPress)
 				{
 					if (daNote.tooLate || !daNote.wasGoodHit)
 					{
@@ -1994,7 +1994,7 @@ class PlayState extends MusicBeatState
 					daNote.kill();
 					notes.remove(daNote, true);
 					daNote.destroy();
-				} else if (daNote.y > (FlxG.height + VSD) && Downscroll && daNote.mustPress){
+				} else if (daNote.y > FlxG.height + VSD && Downscroll && daNote.mustPress){
 					if (daNote.tooLate || !daNote.wasGoodHit)
 					{
 						noteMiss(daNote.noteData);
@@ -2377,7 +2377,7 @@ class PlayState extends MusicBeatState
 			UseTheseNotes.sort((A, B) -> Std.int(A.strumTime - B.strumTime)); //closest to furthest notes, not the other way around :facepalm:
 			for(daNote in UseTheseNotes){							//  |
 				var depends:Float = Strictness; 			        //  V  if statement so long I had to put down 2 lol
-				if (Math.abs((daNote.strumTime - VSD) - Conductor.songPosition) <= depends && FlxG.keys.anyJustPressed([daNote.CurBoundKey]) && daNote.mustPress){
+				if (Math.abs(daNote.strumTime - Conductor.songPosition) <= depends && FlxG.keys.anyJustPressed([daNote.CurBoundKey]) && daNote.mustPress){
 					if (!Lmaocount[daNote.noteData] && !daNote.isSustainNote){
 						if(HSEnabled) FlxG.sound.play(hitSound, 1.2);
 						goodNoteHit(daNote);

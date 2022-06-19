@@ -31,8 +31,8 @@ class Settings {
 	private static var Index:Array<Dynamic> = [
 		false, //fullscreen
 		true,  //useful info
-		[A, S, W, D], //Controls
-		[S, D, F, J, K, L], // 6k Controls
+		[A, S, LEFT, RIGHT], //Controls
+		[A, S, D, LEFT, DOWN, RIGHT], // 6k Controls
 		[A, S, D, F, SPACE, J, K, L, SEMICOLON], // 9k iuhnseiuf
 		true, //Antialiasing
 		95, //How far a note can be pressed
@@ -49,29 +49,31 @@ class Settings {
 		true, //well.... leave this true
 		100,
 		0, //Judgement delay (in ms)
-		0, //Visual delay (in ms)
+		0 //Visual delay (in ms)
 	];
 	
-	private static var BaseIndex:Array<Dynamic> = [
-		false,
-		true,
-		[A, S, W, D],
-		[S, D, F, J, K, L],
-		[A, S, D, F, SPACE, J, K, L, SEMICOLON],
-		true,
-		95,
-		0,
-		[0, 0],
-		true,
-		true,
-		false,
-		true,
-		true, 
-		true,
-		true,
-		500,
-		true,
-		100
+	public static var BaseIndex:Array<Dynamic> = [
+		false, //fullscreen
+		true,  //useful info
+		[A, S, LEFT, RIGHT], //Controls
+		[A, S, D, LEFT, DOWN, RIGHT], // 6k Controls
+		[A, S, D, F, SPACE, J, K, L, SEMICOLON], // 9k iuhnseiuf
+		true, //Antialiasing
+		95, //How far a note can be pressed
+		0, //Audio Delay. (In Milliseconds)
+		[0, 0], //Combo offset
+		true, //Downscroll
+		true, //Show the hud
+		false, // BotPlay
+		true, // Ghost tapping
+		true, // Middle scroll, Better Accuracy
+		true, //Cam Zooms
+		true, //Shows Fps
+		500, //fps cap
+		true, //well.... leave this true
+		100,
+		0, //Judgement delay (in ms)
+		0 //Visual delay (in ms)
 	];
 	
 	public static function Init(Reset:Bool = false)

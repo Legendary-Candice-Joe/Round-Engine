@@ -136,7 +136,7 @@ class Offset extends MusicBeatState
 			}
 		} else if (Mode == "Input Delay"){
 			if(changedModes){
-				Offsets.changeText(Settings.Get("Input Delay") + "ms");
+				Offsets.changeText(Settings.Get("Input Delay") + " Percent");
 
 				DistanceMode(false);
 				Infotxt.text = "Sets the input offset, useful if your keyboard has a lot of delay.";
@@ -164,7 +164,7 @@ class Offset extends MusicBeatState
 			}
 		} else if (Mode == "Visual Delay"){
 			if(changedModes){
-				Offsets.changeText(Settings.Get("Visual Delay") + "ms");
+				Offsets.changeText(Settings.Get("Visual Delay") + " Percent");
 
 				DistanceMode(false);
 				Infotxt.text = "Sets the visual offset, useful if your screen has a lot of delay.";

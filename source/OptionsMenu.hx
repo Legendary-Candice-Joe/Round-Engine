@@ -18,7 +18,7 @@ import lime.utils.Assets;
 
 class OptionsMenu extends MusicBeatState
 {
-	var controlsStrings:Array<String> = ['Basic', 'Controls', 'Offset', 'Gameplay', 'Other'];
+	var controlsStrings:Array<String> = ['Basic', 'Controls', 'Offset', 'Gameplay', 'Other', 'Presets'];
 	var CurSel:Int = 1;
 	
 	var SubMenu:String = "Main";
@@ -42,7 +42,7 @@ class OptionsMenu extends MusicBeatState
 
 		for (i in 0...controlsStrings.length)
 		{
-			var TempAl:AlphabetGlowing = new AlphabetGlowing(4, i * (controlsStrings.length * 28), controlsStrings[i], true, false);
+			var TempAl:AlphabetGlowing = new AlphabetGlowing(4, i * 110, controlsStrings[i], true, false);
 			TempAl.alpha = 0.5;
 			add(TempAl);
 			ListString.push(TempAl);
@@ -157,13 +157,13 @@ class OptionsMenu extends MusicBeatState
 					case "6":
 						var FakeControls = Settings.Get("6K Controls");
 						
-						FakeControls[CurSel - 4] = Finally;
+						FakeControls[CurSel - 5] = Finally;
 						trace(FakeControls);
 						Settings.Change("6K Controls", FakeControls);
 					case "9":
 						var FakeControls = Settings.Get("9K Controls");
 						
-						FakeControls[CurSel - 10] = Finally;
+						FakeControls[CurSel - 12] = Finally;
 						trace(FakeControls);
 						Settings.Change("9K Controls", FakeControls);
 				}
@@ -194,6 +194,8 @@ class OptionsMenu extends MusicBeatState
 						SubMenu = controlsStrings[CurSel];
 						
 						trace("chnged to " + SubMenu);
+
+						FlxG.save.data.visitOptions = true;
 						
 						switch (CurSel) 
 						{
@@ -208,6 +210,8 @@ class OptionsMenu extends MusicBeatState
 								GameplayM();
 							case 4:
 								OtherM();
+							case 5:
+								PresetsM();
 						}
 						
 						CurSel = 1;
@@ -224,8 +228,10 @@ class OptionsMenu extends MusicBeatState
 							SetingText[CurSel].changeText("Start Volume " + Settings.Get('Start Volume'));
 						}
 					case "Controls":
-						FlxTween.tween(SetingText[CurSel], {x: FlxG.width / 2}, 0.08, {ease: FlxEase.quadInOut});
-						Binding = true;
+						if(Setings[CurSel] != ''){
+							FlxTween.tween(SetingText[CurSel], {x: FlxG.width / 2}, 0.08, {ease: FlxEase.quadInOut});
+							Binding = true;
+						}
 					case "Gameplay":
 						Settings.Change(Setings[CurSel], !Settings.Get(Setings[CurSel]));
 						Boxes[CurSel].animation.play(quickCheck(Setings[CurSel]));
@@ -242,9 +248,137 @@ class OptionsMenu extends MusicBeatState
 							FlxG.drawFramerate = Settings.Get('FPS Cap');
 							SetingText[CurSel].changeText("FPS Cap " + Settings.Get('FPS Cap'));
 						} else {
+							Settings.BaseIndex = [
+								false,
+								true, 
+								[A, S, LEFT, RIGHT],
+								[A, S, D, LEFT, DOWN, RIGHT],
+								[A, S, D, F, SPACE, J, K, L, SEMICOLON], 
+								true,
+								95,
+								0,
+								[0, 0], 
+								true,
+								true, 
+								false,
+								true,
+								true,
+								true,
+								true,
+								500,
+								true, 
+								100,
+								0, 
+								0 
+							];
+							
 							Settings.Init(true);
 							FlxG.switchState(new OptionsMenu());
 						}
+					case "Presets":
+						switch(CurSel){
+							case 0:
+								Settings.BaseIndex = [
+									false, //fullscreen
+									true,  //useful info
+									[D, F, J, K], //Controls
+									[S, D, F, J, K, L], // 6k Controls
+									[A, S, D, F, SPACE, H, J, K, L], // 9k iuhnseiuf
+									true, //Antialiasing
+									100, //How far a note can be pressed
+									50, //Audio Delay. (In Milliseconds)
+									[0, 0], //Combo offset
+									false, //Downscroll
+									true, //Show the hud
+									false, // BotPlay
+									true, // Ghost tapping
+									true, // Middle scroll, Better Accuracy
+									true, //Cam Zooms
+									true, //Shows Fps
+									300, //fps cap
+									true, //well.... leave this true
+									100,
+									0, //Judgement delay (in ms)
+									0 //Visual delay (in ms)
+								];
+							case 1:
+								Settings.BaseIndex = [
+									false, //fullscreen
+									true,  //useful info
+									[A, S, UP, FlxKey.RIGHT], //Controls
+									[A, S, D, FlxKey.LEFT, DOWN, FlxKey.RIGHT], // 6k Controls
+									[A, S, D, F, SPACE, H, J, K, L], // 9k iuhnseiuf
+									true, //Antialiasing
+									110, //How far a note can be pressed
+									0, //Audio Delay. (In Milliseconds)
+									[0, 0], //Combo offset
+									false, //Downscroll
+									true, //Show the hud
+									false, // BotPlay
+									false, // Ghost tapping
+									true, // Middle scroll, Better Accuracy
+									true, //Cam Zooms
+									true, //Shows Fps
+									120, //fps cap
+									true, //well.... leave this true
+									100,
+									0, //Judgement delay (in ms)
+									0 //Visual delay (in ms)
+								];
+							case 2:
+								Settings.BaseIndex = [
+									true, //fullscreen
+									true,  //useful info
+									[D, F, J, K], //Controls
+									[S, D, F, J, K, L], // 6k Controls
+									[A, S, D, F, SPACE, J, K, L, SEMICOLON], // 9k iuhnseiuf
+									true, //Antialiasing
+									95, //How far a note can be pressed
+									50, //Audio Delay. (In Milliseconds)
+									[-100, -100], //Combo offset
+									true, //Downscroll
+									true, //Show the hud
+									false, // BotPlay
+									true, // Ghost tapping
+									true, // Middle scroll, Better Accuracy
+									true, //Cam Zooms
+									true, //Shows Fps
+									500, //fps cap
+									true, //well.... leave this true
+									100,
+									3, //Judgement delay (in ms)
+									3 //Visual delay (in ms)
+								];
+							case 3:
+								Settings.BaseIndex = [
+									true, //fullscreen
+									false,  //useful info
+									[A, S, UP, FlxKey.RIGHT], //Controls
+									[A, S, D, FlxKey.LEFT, DOWN, FlxKey.RIGHT], // 6k Controls
+									[A, S, D, F, SPACE, J, K, L, SEMICOLON], // 9k iuhnseiuf
+									true, //Antialiasing
+									105, //How far a note can be pressed
+									50, //Audio Delay. (In Milliseconds)
+									[0, 0], //Combo offset
+									false, //Downscroll
+									false, //Show the hud
+									true, // BotPlay
+									false, // Ghost tapping
+									true, // Middle scroll, Better Accuracy
+									false, //Cam Zooms
+									false, //Shows Fps
+									120, //fps cap
+									true, //well.... leave this true
+									100,
+									0, //Judgement delay (in ms)
+									0 //Visual delay (in ms)
+								];
+						}
+						Settings.Init(true);
+						Main.FrameShow.visible = Settings.Get("Show FPS");
+						Main.wm.poggars = "Isaac Mod Studios® Technologys";
+						Main.lmao.poggars = "http://BeatingChildren.cf";
+						FlxG.switchState(new OptionsMenu());
 				}
 			}
 			
@@ -374,13 +508,13 @@ class OptionsMenu extends MusicBeatState
 	function ControlsM()
 	{
 		Setings = [
-		'4K Left', '4K Down', '4K Up', '4K Right', 							//  |
-		'6K Left', '6K Up', '6K Right', '6K Left2', '6K Down', '6K Right2', //  V   jeez what a mess.
+		'4K Left', '4K Down', '4K Up', '4K Right', '', 							//  |
+		'6K Left', '6K Up', '6K Right', '6K Left2', '6K Down', '6K Right2', '', //  V   jeez what a mess.
 		'9K Left', '9K Down', '9K Up', '9K Right', '9K Middle', '9K Left2', '9K Down2', '9K Up2', '9K Right2'
 		];
 		Desc = [
-		'', '', '', '',
-		'', '', '', '', '', '',
+		'', '', '', '', '',
+		'', '', '', '', '', '', '',
 		'', '', '', '', '', '', '', '', ''
 		];
 		BS = [
@@ -397,12 +531,14 @@ class OptionsMenu extends MusicBeatState
 				case "4":
 					curKey = Controls.getKeyName(Settings.Get("4K Controls")[i]);
 				case "6":
-					curKey = Controls.getKeyName(Settings.Get("6K Controls")[i - 4]);
+					curKey = Controls.getKeyName(Settings.Get("6K Controls")[i - 5]);
 				case "9":
-					curKey = Controls.getKeyName(Settings.Get("9K Controls")[i - 10]);
+					curKey = Controls.getKeyName(Settings.Get("9K Controls")[i - 12]);
 			}
+
+			var gibGorb:String = Setings[i] != '' ? ": " : "";
 			
-			var TempO:Alphabet = new Alphabet(0, 0, Setings[i] + ": " + curKey, false, false);
+			var TempO:Alphabet = new Alphabet(0, 0, Setings[i] + gibGorb + curKey, false, false);
 			FlxTween.tween(TempO, {y: (78 * i) + 10}, 0.4, {ease: FlxEase.quadInOut});
 			SetingText.push(TempO);
 			add(TempO);
@@ -428,7 +564,7 @@ class OptionsMenu extends MusicBeatState
 		'Show the FPS at the top left???????',
 		'Min is 60. Max is 500. Change this if you\'d like to preserve system resources',
 		'Light the gray notes on the left. (pls keep enabled)',
-		'don\'t.'
+		'Resets to true defaults, not a preset'
 		];
 		BS = [true, true, false, true, false];
 		
@@ -454,6 +590,37 @@ class OptionsMenu extends MusicBeatState
 			} else {
 				Boxes.push(new FlxSprite());
 			}
+		}
+	}
+
+	function PresetsM()
+	{
+		Setings = ['Average FNF Player', 'Beginner FNF Player', 'Competitive FNF Player', 'Demo or Showcaser'];
+		Desc = [
+		'For fnf players with some experience, but don\'t care about offset', 
+		'For fnf players as their first rythm game! pretty much stock game settings', 
+		'For experienced rythm gamers in other games. Or really good fnf players',
+		'Enables BOTPLAY, hides hud elements. Made for showcasing crap'
+		];
+		BS = [false, false, false, false];
+		
+		for (i in 0...Setings.length){
+			var TempO:Alphabet = new Alphabet(0, 0, Setings[i], true, false);
+			FlxTween.tween(TempO, {y: (78 * i) + 40}, 0.4, {ease: FlxEase.quadInOut});
+			SetingText.push(TempO);
+			add(TempO);
+			
+			if(BS[i]){
+				var ChkBx:FlxSprite = new FlxSprite();
+				ChkBx.frames = Paths.getSparrowAtlas('Box');
+				ChkBx.animation.addByPrefix('Yes', 'Tick', 24, false);
+				ChkBx.animation.addByPrefix('No', 'Untick', 24, false);
+				add(ChkBx);
+				Boxes.push(ChkBx);
+				ChkBx.animation.play(quickCheck(Setings[i]));
+				FlxTween.tween(ChkBx, {y: (78 * i) + 40}, 0.4, {ease: FlxEase.quadInOut});
+			} else
+				Boxes.push(new FlxSprite());
 		}
 	}
 	
