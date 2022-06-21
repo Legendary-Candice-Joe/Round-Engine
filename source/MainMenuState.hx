@@ -95,6 +95,9 @@ class MainMenuState extends MusicBeatState
 
 		changeItem();
 
+		ChartingState.bkIDs = [0];
+		ChartingState.bkNames = ['Start'];
+
 		super.create();
 	}
 

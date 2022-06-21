@@ -25,7 +25,8 @@ class Settings {
 		"Light Opponent Strums",
 		"Start Volume",
 		"Input Delay",
-		"Visual Delay"
+		"Visual Delay",
+		"Miss Health Loss"
 	];
 	
 	private static var Index:Array<Dynamic> = [
@@ -49,7 +50,8 @@ class Settings {
 		true, //well.... leave this true
 		100,
 		0, //Judgement delay (in ms)
-		0 //Visual delay (in ms)
+		0, //Visual delay (in ms)
+		0.04
 	];
 	
 	public static var BaseIndex:Array<Dynamic> = [
@@ -73,7 +75,8 @@ class Settings {
 		true, //well.... leave this true
 		100,
 		0, //Judgement delay (in ms)
-		0 //Visual delay (in ms)
+		0, //Visual delay (in ms)
+		0.04
 	];
 	
 	public static function Init(Reset:Bool = false)

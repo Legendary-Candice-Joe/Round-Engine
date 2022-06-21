@@ -1531,7 +1531,7 @@ class PlayState extends MusicBeatState
 
 			babyArrow.y -= 10;
 			babyArrow.alpha = 0;
-			FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.3 + (0.2 * i)});
+			FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.2 * i});
 
 			babyArrow.ID = i;
 
@@ -1748,10 +1748,17 @@ class PlayState extends MusicBeatState
 				// trace(PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection);
 			}
 			
-			if(PlayState.SONG.notes[Std.int(curStep / 16)].cKey && PlayState.SONG.notes[Std.int(curStep / 16)].KA != curK){
-				changeManiaMidSong(PlayState.SONG.notes[Std.int(curStep / 16)].KA);
-				curK = PlayState.SONG.notes[Std.int(curStep / 16)].KA;
-				curC = Note.alsoVuk[curK];
+			if(PlayState.SONG.notes[Std.int(curStep / 16)].cKey){
+				var TSKS = PlayState.SONG.notes[Std.int(curStep / 16)].KA;
+				if(Std.string(TSKS) == "null")
+					TSKS = 0;
+
+				if(TSKS != curK){
+					changeManiaMidSong(TSKS);
+					curK = TSKS;
+					curC = Note.alsoVuk[curK];
+					//trace(curK + " abc " + Std.string(PlayState.SONG.notes[Std.int(curStep / 16)].KA) + " cba " + TSKS);
+				}
 			}
 
 			var CamSpeed:Float = CoolUtil.boundTo(elapsed * 2.4, 0, 1);
@@ -2613,7 +2620,7 @@ class PlayState extends MusicBeatState
 				Accuracy = (fakeAccuracy / scrores.length) / 3.5;
 			}
 			
-			health -= 0.04;
+			health -= Settings.Get('Miss Health Loss');
 			if (combo > 5)
 			{
 				gf.playAnim('sad');

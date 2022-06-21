@@ -20,6 +20,10 @@ This is Round Engine! A new engine for friday night funkin'.
 
 8. Custom and reliable input system known only as round input.
 
+9. Option presets for different people.
+
+10 (NEW!). Allows changing the amount of health lost by missing a note.
+
 # Charting Features
 
 Now this is based off of the slightly older than the latest version of the base game. With a few features taken from psych engine, but the chart editor is a bit primitave. HOWEVER! I will still list a couple things.
@@ -33,6 +37,14 @@ Now this is based off of the slightly older than the latest version of the base 
 4. By pressing X / Z you can change grid zoom. WHICH, unlike psych engine, allows triplets.
 
 5. Change ui box thing from the right to the left of the screen.
+
+6 (NEW!). Bookmarks. You can now set bookmarks to specific sections and jump back to them from where-ever.
+
+7. Fixed a bug where typing controls still mess around with the chart editor.
+
+8 (NEW!). You can now copy and paste sections, similar to psych engine.
+
+9. Fixed a bug where the charting cursor would still show after exiting charting state.
 
 # Why?
 

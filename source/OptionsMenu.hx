@@ -233,8 +233,14 @@ class OptionsMenu extends MusicBeatState
 							Binding = true;
 						}
 					case "Gameplay":
-						Settings.Change(Setings[CurSel], !Settings.Get(Setings[CurSel]));
-						Boxes[CurSel].animation.play(quickCheck(Setings[CurSel]));
+						if(BS[CurSel]){
+							Settings.Change(Setings[CurSel], !Settings.Get(Setings[CurSel]));
+							Boxes[CurSel].animation.play(quickCheck(Setings[CurSel]));
+						} else {
+							var Deeznuts = (Settings.Get("Miss Health Loss") + 0.0025) % 0.2025;
+							Settings.Change('Miss Health Loss', Deeznuts);
+							SetingText[CurSel].changeText("Miss Health Loss " + Std.int(Settings.Get('Miss Health Loss') * 10000) / 100);
+						}
 					case "Other":
 						if (BS[CurSel])
 						{
@@ -269,7 +275,8 @@ class OptionsMenu extends MusicBeatState
 								true, 
 								100,
 								0, 
-								0 
+								0,
+								0.0475
 							];
 							
 							Settings.Init(true);
@@ -299,7 +306,8 @@ class OptionsMenu extends MusicBeatState
 									true, //well.... leave this true
 									100,
 									0, //Judgement delay (in ms)
-									0 //Visual delay (in ms)
+									0, //Visual delay (in ms)
+									0.0475
 								];
 							case 1:
 								Settings.BaseIndex = [
@@ -323,7 +331,8 @@ class OptionsMenu extends MusicBeatState
 									true, //well.... leave this true
 									100,
 									0, //Judgement delay (in ms)
-									0 //Visual delay (in ms)
+									0, //Visual delay (in ms)
+									0.04
 								];
 							case 2:
 								Settings.BaseIndex = [
@@ -347,7 +356,8 @@ class OptionsMenu extends MusicBeatState
 									true, //well.... leave this true
 									100,
 									3, //Judgement delay (in ms)
-									3 //Visual delay (in ms)
+									3, //Visual delay (in ms)
+									0.0625
 								];
 							case 3:
 								Settings.BaseIndex = [
@@ -371,7 +381,8 @@ class OptionsMenu extends MusicBeatState
 									true, //well.... leave this true
 									100,
 									0, //Judgement delay (in ms)
-									0 //Visual delay (in ms)
+									0, //Visual delay (in ms)
+									0
 								];
 						}
 						Settings.Init(true);
@@ -475,21 +486,26 @@ class OptionsMenu extends MusicBeatState
 	
 	function GameplayM()
 	{
-		Setings = ['Downscroll', 'Show HUD', 'BotPlay', 'Ghost Tapping', 'Better Accuracy'];
+		Setings = ['Downscroll', 'Show HUD', 'BotPlay', 'Ghost Tapping', 'Better Accuracy', 'Miss Health Loss'];
 		Desc = [
 		'Makes the notes go down instead of up. C\'mon you know this already',
 		'When unchecked, the game hides the time text and stats',
 		'Plays for you :)',
 		'When you press a key in the game, you won\'t recieve a miss. Unless unchecked',
-		'Uses the better accuracy system. (Slightly more memory intensive!)'
+		'Uses the better accuracy system. (Slightly more memory intensive!)',
+		'How much health you lose after missing a note.'
 		];
-		BS = [true, true, true, true, true];
+		BS = [true, true, true, true, true, false];
 		
 		for (i in 0...Setings.length){
 			var TempO:Alphabet = new Alphabet(0, 0, Setings[i], true, false);
 			FlxTween.tween(TempO, {y: (78 * i) + 40}, 0.4, {ease: FlxEase.quadInOut});
 			SetingText.push(TempO);
 			add(TempO);
+
+			if (Setings[i] == "Miss Health Loss"){
+				TempO.changeText("Miss Health Loss " + Std.int(Settings.Get('Miss Health Loss') * 10000) / 100);
+			}
 			
 			if(BS[i]){
 				var ChkBx:FlxSprite = new FlxSprite();

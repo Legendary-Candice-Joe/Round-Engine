@@ -72,7 +72,7 @@ class ChartingState extends MusicBeatState
 
 	var _song:SwagSong;
 
-	var typingShit:FlxInputText;
+	var typingShit:Array<FlxInputText> = [];
 	/*
 	 * WILL BE THE CURRENT / LAST PLACED NOTE
 	**/
@@ -182,19 +182,21 @@ class ChartingState extends MusicBeatState
 		var tabs = [
 			{name: "Song", label: 'Song'},
 			{name: "Section", label: 'Section'},
-			{name: "Note", label: 'Note'}
+			{name: "Note", label: 'Note'},
+			{name: "Bookmarks", label: 'Bookmarks'}
 		];
 
 		UI_box = new FlxUITabMenu(null, tabs, true);
 
 		UI_box.resize(300, 400);
 		UI_box.x = 0;
-		UI_box.y = 20;
+		UI_box.y = 30;
 		add(UI_box);
 
 		addSongUI();
 		addSectionUI();
 		addNoteUI();
+		addBookUI();
 
 		add(curRenderedNotes);
 		add(curRenderedSustains);
@@ -207,7 +209,7 @@ class ChartingState extends MusicBeatState
 	function addSongUI():Void
 	{
 		var UI_songTitle = new FlxUIInputText(10, 10, 70, _song.song, 8);
-		typingShit = UI_songTitle;
+		typingShit = [UI_songTitle];
 
 		var check_voices = new FlxUICheckBox(10, 25, null, null, "Has voice track", 100);
 		check_voices.checked = _song.needsVoices;
@@ -347,6 +349,16 @@ class ChartingState extends MusicBeatState
 			}
 		});
 
+		var copyButton2:FlxButton = new FlxButton(10, 210, "Copy this", function()
+		{
+			storeSection();
+		});
+
+		var pasteButton:FlxButton = new FlxButton(10, 230, "Paste section", function()
+		{
+			pasteNotes();
+		});
+
 		check_mustHitSection = new FlxUICheckBox(10, 30, null, null, "Must hit section", 100);
 		check_mustHitSection.name = 'check_mustHit';
 		check_mustHitSection.checked = true;
@@ -364,6 +376,9 @@ class ChartingState extends MusicBeatState
 
 		check_kys = new FlxUICheckBox(120, 60, null, null, 'Change Keys', 100);
 		check_kys.name = 'change_keyset';
+		check_kys.callback = function(){
+			_song.notes[curSection].KA = _song.keySet;
+		}
 
 		tab_group_section.add(stepperLength);
 		tab_group_section.add(stepperSectionBPM);
@@ -376,6 +391,8 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(copyButton);
 		tab_group_section.add(clearSectionButton);
 		tab_group_section.add(swapSection);
+		tab_group_section.add(copyButton2);
+		tab_group_section.add(pasteButton);
 
 		UI_box.addGroup(tab_group_section);
 	}
@@ -397,6 +414,73 @@ class ChartingState extends MusicBeatState
 		tab_group_note.add(applyLength);
 
 		UI_box.addGroup(tab_group_note);
+	}
+
+	var BKdrd:FlxUIDropDownMenu;
+	public static var bkNames:Array<String> = ["Start"];
+	public static var bkIDs:Array<Int> = [0];
+	var bookNamer:FlxInputText;
+
+	function addBookUI():Void
+	{
+		var tab_group_bookmarks = new FlxUI(null, UI_box);
+		tab_group_bookmarks.name = 'Bookmarks';
+
+		var bookNamer = new FlxUIInputText(135, 55, 80, 'Bookmark', 8);
+		typingShit.push(bookNamer);
+
+		var addBookMark:FlxButton = new FlxButton(135, 10, 'Add Bookmark', function() {
+			bkNames.push(bookNamer.text);
+			bkIDs.push(curSection);
+			BKdrd.setData(FlxUIDropDownMenu.makeStrIdLabelArray(bkNames, true));
+		});
+
+		var copyBookmark:FlxButton = new FlxButton(135, 30, 'Copy Section', function() {
+			for(i in 0...bkNames.length){
+				if(bkNames[i].toLowerCase() == bookNamer.text){
+					storeSection(bkIDs[i]);
+					trace('storing section: ' + bkIDs[i]);
+				}
+			}
+		});
+
+		var removeBookMark:FlxButton = new FlxButton(217, 10, 'Remove Last', function() {
+			var fakeArray:Array<Dynamic> = [
+				[],
+				[]
+			];
+			for(i in 0...bkNames.length-1){
+				fakeArray[0].push(bkNames[i]);
+				fakeArray[1].push(bkIDs[i]);
+			}
+			bkNames = fakeArray[0];
+			bkIDs = fakeArray[1];
+			BKdrd.setData(FlxUIDropDownMenu.makeStrIdLabelArray(bkNames, true));
+		});
+
+		var suggText:FlxText = new FlxText(10,300,1000, "The copy section button will copy -\na bookmark by what you type in.\nNOT the drop down.\nAlso copying only works properly on -\nnon legacy charts!", 10);
+
+		var UI_songTitle = new FlxUIInputText(10, 10, 70, _song.song, 8);
+
+		BKdrd = new FlxUIDropDownMenu(10, 10, FlxUIDropDownMenu.makeStrIdLabelArray(bkNames, true), function(aBK:String)
+		{
+			for(i in 0...bkNames.length){
+				//trace(aBK + " a " + bkNames[i]);
+				if(Std.string(i) == aBK){
+					trace('chang');
+					changeSection(bkIDs[i]);
+				}
+			}
+		});
+
+		tab_group_bookmarks.add(bookNamer);
+		tab_group_bookmarks.add(addBookMark);
+		tab_group_bookmarks.add(BKdrd);
+		tab_group_bookmarks.add(copyBookmark);
+		tab_group_bookmarks.add(suggText);
+		tab_group_bookmarks.add(removeBookMark);
+
+		UI_box.addGroup(tab_group_bookmarks);
 	}
 
 	function loadSong(daSong:String):Void
@@ -573,11 +657,18 @@ class ChartingState extends MusicBeatState
 		curStep = recalculateSteps();
 
 		Conductor.songPosition = FlxG.sound.music.time;
-		_song.song = typingShit.text;
+		_song.song = typingShit[0].text;
 
 		strumLine.y = getYfromStrum(Conductor.songPosition % (Conductor.stepCrochet * lengthBpmBullshit()));
 
-		if(FlxG.keys.justPressed.M){
+		var SmthF:Bool = false;
+
+		for(i in 0...typingShit.length){
+			if(typingShit[i].hasFocus)
+				SmthF = true;
+		}
+
+		if(FlxG.keys.justPressed.M && !SmthF){
 			for(section in _song.notes)
 			{
 				section.sectionNotes = [];
@@ -586,13 +677,15 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		}
 
-		if(FlxG.keys.justPressed.X){
-			curZoom = (curZoom + 1) % zoomList.length;
-			changeGrid();
-		}
-		if(FlxG.keys.justPressed.Z){
-			curZoom = Std.int(Math.abs(curZoom - 1 % zoomList.length));
-			changeGrid();
+		if(!SmthF){
+			if(FlxG.keys.justPressed.X){
+				curZoom = (curZoom + 1) % zoomList.length;
+				changeGrid();
+			}
+			if(FlxG.keys.justPressed.Z){
+				curZoom = Std.int(Math.abs(curZoom - 1 % zoomList.length));
+				changeGrid();
+			}
 		}
 
 		if (curBeat % 4 == 0)
@@ -682,13 +775,15 @@ class ChartingState extends MusicBeatState
 			FlxG.switchState(new PlayState());
 		}
 
-		if (FlxG.keys.justPressed.E)
-		{
-			changeNoteSustain(Conductor.stepCrochet);
-		}
-		if (FlxG.keys.justPressed.Q)
-		{
-			changeNoteSustain(-Conductor.stepCrochet);
+		if(!SmthF){
+			if (FlxG.keys.justPressed.E)
+			{
+				changeNoteSustain(Conductor.stepCrochet);
+			}
+			if (FlxG.keys.justPressed.Q)
+			{
+				changeNoteSustain(-Conductor.stepCrochet);
+			}
 		}
 
 		if (FlxG.keys.justPressed.TAB)
@@ -707,7 +802,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		if (!typingShit.hasFocus)
+		if (!SmthF)
 		{
 			if (FlxG.keys.justPressed.SPACE)
 			{
@@ -788,13 +883,15 @@ class ChartingState extends MusicBeatState
 			if (FlxG.keys.justPressed.DOWN)
 				Conductor.changeBPM(Conductor.bpm - 1); */
 
-		var shiftThing:Int = 1;
-		if (FlxG.keys.pressed.SHIFT)
-			shiftThing = 4;
-		if (FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.D)
-			changeSection(curSection + shiftThing);
-		if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A)
-			changeSection(curSection - shiftThing);
+		if(!SmthF){
+			var shiftThing:Int = 1;
+			if (FlxG.keys.pressed.SHIFT)
+				shiftThing = 4;
+			if (FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.D)
+				changeSection(curSection + shiftThing);
+			if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A)
+				changeSection(curSection - shiftThing);
+		}
 
 		bpmTxt.text = bpmTxt.text = Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2))
 			+ " / "
@@ -895,6 +992,28 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
+	public var copiedNotes:Array<Dynamic> = [];
+
+	function storeSection(?daSection:Int)
+	{
+		if(daSection == null)
+			daSection = curSection;
+
+		copiedNotes = [];
+		for (note in _song.notes[daSection].sectionNotes)
+		{
+			copiedNotes.push([note[0] - (daSection * 16), note[1], note[2]]);
+		}
+	}
+
+	function pasteNotes(){
+		for (note in copiedNotes)
+		{
+			_song.notes[curSection].sectionNotes.push([note[0] + (curSection * 16), note[1] % (fakeC * 2), note[2], fakeK + 1]);
+		}
+		updateGrid();
+	}
+
 	function copySection(?sectionNum:Int = 1)
 	{
 		var daSec = FlxMath.maxInt(curSection, sectionNum);
@@ -903,7 +1022,7 @@ class ChartingState extends MusicBeatState
 		{
 			var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
 
-			var copiedNote:Array<Dynamic> = [strum, note[1], note[2]];
+			var copiedNote:Array<Dynamic> = [strum, note[1] % fakeC, note[2]];
 			_song.notes[daSec].sectionNotes.push(copiedNote);
 		}
 
@@ -921,6 +1040,8 @@ class ChartingState extends MusicBeatState
 		stepperSectionBPM.value = sec.bpm;
 		check_kys.checked = sec.cKey;
 		stpKeyset.value = sec.KA;
+		if(!check_kys.checked)
+			stpKeyset.value = _song.keySet;
 
 		updateHeads();
 	}
