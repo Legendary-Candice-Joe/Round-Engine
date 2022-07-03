@@ -45,6 +45,21 @@ class TitleState extends MusicBeatState
 	{
 		Polymod.init({modRoot: "mods", dirs: ['introMod']});
 
+		var folders:Array<String> = [];
+
+		for(file in sys.FileSystem.readDirectory('assets/skins/')) // no code was stolen :)
+		{
+			var pathThing = haxe.io.Path.join(['assets/skins/', file]);
+			if (sys.FileSystem.isDirectory(pathThing)) {
+				folders.push('skins/' + file);
+			}
+		}
+
+		if(folders.length > 0) {
+			trace(folders);
+			polymod.Polymod.init({modRoot: "assets", dirs: folders});
+		}
+
 		#if (!web)
 		TitleState.soundExt = '.ogg';
 		#end
@@ -168,6 +183,8 @@ class TitleState extends MusicBeatState
 		titleText.updateHitbox();
 		// titleText.screenCenter(X);
 		add(titleText);
+
+		Paths.initXMLData();
 
 		var logo:FlxSprite = new FlxSprite().loadGraphic('assets/images/logo.png');
 		logo.screenCenter();

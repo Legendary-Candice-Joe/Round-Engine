@@ -19,7 +19,11 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.FlxGraphic;
+#if !html5
+import sys.io.File;
+#end
 import Controls;
 
 class Offset extends MusicBeatState
@@ -233,15 +237,20 @@ class Offset extends MusicBeatState
 			fakeMode2 = Mode;
 			
 			trace("scnd trigger");
+
+			var dddaa =  Paths.noteSkin(Settings.Get('Note Skin'))[0];
+			var dddaa2 = Paths.noteSkin(Settings.Get('Note Skin'))[1];
 			
-			DSnote.frames = Paths.getSparrowAtlas('NOTE_assets');
+			DSnote.frames = FakeSparrow.fromSparrowData(dddaa, dddaa2);
 			DSnote.animation.addByPrefix('static', 'arrowSPACE', 24);
 			DSnote.animation.play('static', true);
 			DSnote.x = FlxG.width / 2;
 			DSnote.y = FlxG.height / 2;
 			DSnote.antialiasing = Settings.Get("Antialiasing");
+
+			trace('o');
 			
-			DPnote.frames = Paths.getSparrowAtlas('NOTE_assets');
+			DPnote.frames = FakeSparrow.fromSparrowData(dddaa, dddaa2);
 			DPnote.animation.addByPrefix('middle', 'white0', 24);
 			DPnote.animation.play('middle', true);
 			DPnote.x = DSnote.x;

@@ -8,6 +8,9 @@ import haxe.io.ArrayBufferView;
 import polymod.format.ParseRules.TargetSignatureElement;
 import flixel.input.keyboard.FlxKey;
 import PlayState;
+#if !html5
+import sys.io.File;
+#end
 
 using StringTools;
 
@@ -34,6 +37,7 @@ class Note extends FlxSprite
 	public static var RED_NOTE:Int = 3;
 	
 	public var isEndHold:Bool = false;
+	public var isStartHold:Bool = false;
 	public static var vuk:Array<Float> = [0.7, 0.6, 0.5, 0.55];
 	public static var spaces:Array<Int> = [110, 85, 65, 76];
 	public static var alsoVuk:Array<Int> = [4, 6, 9, 8];
@@ -58,7 +62,7 @@ class Note extends FlxSprite
 	
 	public function loadAnims()
 	{
-		frames = FlxAtlasFrames.fromSparrow('assets/images/NOTE_assets.png', 'assets/images/NOTE_assets.xml');
+		frames = FlxAtlasFrames.fromSparrow(Paths.noteSkin(PlayState.globalSkin)[0], Paths.noteSkin(PlayState.globalSkin)[1]);
 		
 		for (i in 0...psC) 
 		{
@@ -74,6 +78,8 @@ class Note extends FlxSprite
 
 	public static var psK:Int = 0;
 	public static var psC:Int = 4;
+
+	public var message:String = '';
 	
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?personalMania:Int = 0)
 	{
@@ -191,7 +197,7 @@ class Note extends FlxSprite
 				
 			isEndHold = true;
 
-			if (prevNote.isSustainNote)
+			if (prevNote.isSustainNote && !prevNote.isStartHold)
 			{
 				prevNote.isEndHold = false;
 				
@@ -200,6 +206,10 @@ class Note extends FlxSprite
 				prevNote.offset.y = -19;
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed * (0.7 / vuk[psK]);
 				// prevNote.setGraphicSize();
+			} else if(!prevNote.isSustainNote && isSustainNote){
+				flipY = !PlayState.Downscroll;
+				animation.play(shartColour[psK][noteData] + "holdend");
+				isStartHold = true;
 			}
 		}
 	}

@@ -38,6 +38,9 @@ import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
+#if !html5
+import sys.io.File;
+#end
 
 using StringTools;
 
@@ -125,6 +128,7 @@ class PlayState extends MusicBeatState
 	public static var VSD:Float = 0;
 	public static var IND:Float = 0;
 	public var hitSound:String = "";
+	public static var globalSkin:String;
 	
 	public static var keyC:Int = 4;
 	public static var Deez:Int = 0;
@@ -133,7 +137,7 @@ class PlayState extends MusicBeatState
 	public var Accuracy:Float = -1;
 	public var FCrate:Int = 0;
 	
-	public static var endNotePositions:Array<Float> = [60, 78, 81, 76];
+	public static var endNotePositions:Array<Float> = [68, 78, 81, 76];
 	
 	public static var bruj:Array<Dynamic> = [
 		['LEFT','DOWN','UP','RIGHT'],
@@ -173,6 +177,7 @@ class PlayState extends MusicBeatState
 		MiddleScroll = Settings.Get("Better Accuracy"); // originally middle scroll
 		HSEnabled = Settings.Get("BotPlay"); // originally hit sounds.
 		LightBoi = Settings.Get("Light Opponent Strums");
+		globalSkin = Settings.Get("Note Skin");
 		VSD = Settings.Get("Visual Delay");
 		IND = Settings.Get("Input Delay");
 
@@ -1270,7 +1275,7 @@ class PlayState extends MusicBeatState
 					}
 
 				default:
-					babyArrow.frames = FlxAtlasFrames.fromSparrow('assets/images/NOTE_assets.png', 'assets/images/NOTE_assets.xml');
+					babyArrow.frames = FlxAtlasFrames.fromSparrow(Paths.noteSkin(PlayState.globalSkin)[0], Paths.noteSkin(PlayState.globalSkin)[1]);
 					
 					for (X in 0...keyC){
 						babyArrow.animation.addByPrefix(Note.shartColour[Deez][X], 'arrow' + generate[Deez][X]);
@@ -1282,7 +1287,7 @@ class PlayState extends MusicBeatState
 					babyArrow.x += Note.spaces[Deez] * i;
 					babyArrow.animation.addByPrefix('static', 'arrow' + generate[Deez][i]);
 					babyArrow.animation.addByPrefix('pressed', Note.shartColour[Deez][i] + ' press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', Note.shartColour[Deez][i] + ' confirm', 24, false);
+					babyArrow.animation.addByPrefix('confirm', Note.shartColour[Deez][i] + ' confirm', 15, false);
 			}
 
 			babyArrow.updateHitbox();
@@ -1378,7 +1383,10 @@ class PlayState extends MusicBeatState
 			
 			new FlxTimer().start(sustainQ ? 0.2 : 0.1, function(tmr:FlxTimer)
 			{
-				if (!OMG[nData]) strumLineNotes.members[nData].animation.play("static");
+				if (!OMG[nData]) {
+					strumStaticAnim(nData >= curC ? false : true, nData % curC);
+					strumLineNotes.members[nData].animation.play("static");
+				}
 				centerStrum(nData);
 				/*if (OMG[nData]) */
 				OMG[nData] = false;
@@ -1386,6 +1394,49 @@ class PlayState extends MusicBeatState
 			
 			strumLineNotes.members[nData].animation.play("confirm");
 			centerStrum(nData);
+		}
+	}
+
+	function strumPressAnim(isDad:Bool, id:Int){
+		var realID = id + (isDad ? 0 : curC);
+
+		var daStrum = strumLineNotes.members[realID];
+		FlxTween.tween(daStrum.scale, {x: Note.vuk[curK] * 0.9, y: Note.vuk[curK] * 0.9}, 0.04, {ease: FlxEase.sineOut, onComplete: function(twx:FlxTween){
+			FlxTween.tween(daStrum.scale, {x: Note.vuk[curK], y: Note.vuk[curK]}, 0.05, {ease: FlxEase.sineIn});
+		}});
+	}
+
+	public function strumStaticAnim(isDad:Bool, id:Int){
+		var daStrum:FlxSprite = strumLineNotes.members[id + (isDad ? 0 : curC)];
+		if(daStrum.animation.name == "confirm"){
+			/*daStrum.scale.x = Note.noteScales[mania] * 1.2;
+			daStrum.scale.y = Note.noteScales[mania] * 1.2;
+
+			FlxTween.tween(daStrum.scale, {x: Note.noteScales[mania], y: Note.noteScales[mania]}, 0.03, {ease: FlxEase.sineOut});*/
+
+			var spawnPos:Float = [22, 29, 38, 33][curK];
+
+			var tempStrum:FlxSprite = new FlxSprite();
+			tempStrum.frames = FakeSparrow.fromSparrowData(Paths.noteSkin(globalSkin)[0], Paths.noteSkin(globalSkin)[1]);
+			tempStrum.animation.addByPrefix('confirm', Note.shartColour[curK][id] + ' confirm', 24, false);
+			add(tempStrum);
+			tempStrum.cameras = [camStrums];
+			tempStrum.animation.play('confirm');
+			tempStrum.scale.x = daStrum.scale.x;
+			tempStrum.scale.y = daStrum.scale.y;
+			tempStrum.angle = daStrum.angle;
+			tempStrum.alpha = daStrum.alpha * 0.5;
+			tempStrum.x = daStrum.x - spawnPos;
+			tempStrum.y = daStrum.y - spawnPos;
+			tempStrum.centerOffsets();
+			tempStrum.centerOrigin();
+			//trace((meep[isDad ? 0 : 1] != '' ? Note.frameN2 : Note.frameN1)[mania][daStrum.ID]);
+
+			FlxTween.tween(tempStrum, {alpha: 0}, 0.085, {ease: FlxEase.sineIn, onComplete: function(twn:FlxTween){
+				remove(tempStrum);
+				tempStrum = null;
+				twn = null;
+			}});
 		}
 	}
 	
@@ -1511,7 +1562,7 @@ class PlayState extends MusicBeatState
 					}
 
 				default:
-					babyArrow.frames = FlxAtlasFrames.fromSparrow('assets/images/NOTE_assets.png', 'assets/images/NOTE_assets.xml');
+					babyArrow.frames = FlxAtlasFrames.fromSparrow(Paths.noteSkin(PlayState.globalSkin)[0], Paths.noteSkin(PlayState.globalSkin)[1]);
 					
 					for (X in 0...darde){
 						babyArrow.animation.addByPrefix(Note.shartColour[man][X], 'arrow' + generate[man][X]);
@@ -1523,7 +1574,7 @@ class PlayState extends MusicBeatState
 					babyArrow.x += Note.spaces[man] * i;
 					babyArrow.animation.addByPrefix('static', 'arrow' + generate[man][i]);
 					babyArrow.animation.addByPrefix('pressed', Note.shartColour[man][i] + ' press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', Note.shartColour[man][i] + ' confirm', 24, false);
+					babyArrow.animation.addByPrefix('confirm', Note.shartColour[man][i] + ' confirm', 15, false);
 			}
 
 			babyArrow.updateHitbox();
@@ -1936,11 +1987,10 @@ class PlayState extends MusicBeatState
 				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.isSustainNote)
 					dadNoteHit(daNote);
 
-				if (daNote.isSustainNote && Math.abs(daNote.y - strumLine.y) <= 36 && !daNote.mustPress){
+				if (daNote.isSustainNote && Math.abs(daNote.y - strumLine.y) <= 36 && !daNote.mustPress)
 					dadNoteHit(daNote);
-				}
 
-				if (daNote.mustPress && daNote.wasGoodHit && HSEnabled)
+				if (((!daNote.isSustainNote && daNote.wasGoodHit) || (daNote.isSustainNote && Math.abs(daNote.y - strumLine.y) <= 36)) && daNote.mustPress && HSEnabled)
 				{
 					trace('nope');
 					
@@ -1978,10 +2028,23 @@ class PlayState extends MusicBeatState
 				
 				daNote.y = (completeGarbage * marY) + strumLine.y + (Downscroll ? VSD : -VSD);
 				
+				var noPls:Float = (endNotePositions[curK] / (Conductor.bpm / 64)) * SONG.speed;
+
 				if (daNote.isEndHold){ //so no weird gaps
-					var noPls:Float = (endNotePositions[curK] / (Conductor.bpm / 64)) * SONG.speed;
 					daNote.y += noPls * 0.93;
 					if(!Downscroll) daNote.y -= noPls * 1.4;
+
+					if(daNote.prevNote.isStartHold && daNote.isEndHold)
+						daNote.prevNote.message = 'f**k you';
+				}
+				if (daNote.isStartHold){
+					daNote.y += noPls * 1.1;
+					if(Downscroll) daNote.y -= noPls * 2.445;
+
+					if(daNote.message == 'f**k you'){
+						daNote.y -= noPls * 0.17;
+						if(Downscroll) daNote.y += noPls * 0.6;
+					}
 				}
 
 				// WIP interpolation shit? Need to fix the pause issue
@@ -2350,6 +2413,7 @@ class PlayState extends MusicBeatState
 			if (!FlxG.keys.anyPressed([Note.BoundKeys[curK][I]])){
 				if (!playerStrums.members[I].animation.curAnim.name.endsWith('static'))
 				{
+					strumStaticAnim(false, I);
 					playerStrums.members[I].animation.play('static');
 					centerStrum(I + curC);
 				}
@@ -2360,6 +2424,7 @@ class PlayState extends MusicBeatState
 			if (daNote.isSustainNote && FlxG.keys.anyPressed([daNote.CurBoundKey]) && Math.abs(daNote.y - strumLine.y) <= 36 && daNote.mustPress){
 				goodNoteHit(daNote); //probably the laziest sustain code ever lmao
 				playerStrums.members[daNote.noteData % curC].animation.play('confirm');
+				//lmaoImDumb(daNote.noteData + curC, true);
 				centerStrum(daNote.noteData + curC);
 			}
 			if (HitNotes.contains(Std.string(daNote.strumTime))){
@@ -2391,6 +2456,7 @@ class PlayState extends MusicBeatState
 						HitNotes.push(Std.string(daNote.strumTime));
 						Lmaocount[daNote.noteData] = true;
 						playerStrums.members[daNote.noteData].animation.play('confirm', true);
+						//lmaoImDumb(daNote.noteData + curC, false);
 						centerStrum(daNote.noteData + curC);
 					}
 				}
@@ -2406,6 +2472,7 @@ class PlayState extends MusicBeatState
 				{
 					playerStrums.members[I].animation.play('pressed');
 					centerStrum(I + curC);
+					strumPressAnim(false, I);
 					if (!Settings.Get("Ghost Tapping") && !boyfriend.stunned){
 						noteMiss(I, -1, 0);
 					}

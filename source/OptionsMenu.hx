@@ -26,6 +26,8 @@ class OptionsMenu extends MusicBeatState
 	public var ListString:Array<AlphabetGlowing> = [];
 	var Infotxt:FlxText;
 
+	var prevSprite:FlxSprite;
+
 	override function create()
 	{
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic('assets/images/menuDesat.png');
@@ -47,7 +49,7 @@ class OptionsMenu extends MusicBeatState
 			add(TempAl);
 			ListString.push(TempAl);
 		}
-		
+
 		changeSel(true);
 
 		super.create();
@@ -219,7 +221,7 @@ class OptionsMenu extends MusicBeatState
 					case "Basic":
 						if(BS[CurSel]){
 							Main.wm.poggars = "Isaac Mod Studios® Technologys";
-							Main.lmao.poggars = "http://BeatingChildren.cf";
+							Main.lmao.poggars = "https://BeatingChildren.cf";
 							Settings.Change(Setings[CurSel], !Settings.Get(Setings[CurSel]));
 							Boxes[CurSel].animation.play(quickCheck(Setings[CurSel]));
 						} else {
@@ -233,13 +235,27 @@ class OptionsMenu extends MusicBeatState
 							Binding = true;
 						}
 					case "Gameplay":
+						prevSprite.alpha = 0;
 						if(BS[CurSel]){
 							Settings.Change(Setings[CurSel], !Settings.Get(Setings[CurSel]));
 							Boxes[CurSel].animation.play(quickCheck(Setings[CurSel]));
-						} else {
+						} else if(Setings[CurSel] == "Miss Health Loss"){
 							var Deeznuts = (Settings.Get("Miss Health Loss") + 0.0025) % 0.2025;
 							Settings.Change('Miss Health Loss', Deeznuts);
 							SetingText[CurSel].changeText("Miss Health Loss " + Std.int(Settings.Get('Miss Health Loss') * 10000) / 100);
+						} else {
+							var liste:Array<String> = Paths.getNoteSkins();
+							var activeSkin = Settings.Get('Note Skin');
+							for(i in 0...liste.length){
+								if(liste[i] == activeSkin){
+									Settings.Change('Note Skin', liste[(i + 1) % liste.length]);
+
+									prevSprite.alpha = 1;
+									SetingText[CurSel].changeText("Note Skin " + Settings.Get('Note Skin'));
+									prevSprite.loadGraphic(Paths.noteSkin(Settings.Get('Note Skin'))[2]);
+									break;
+								}
+							}
 						}
 					case "Other":
 						if (BS[CurSel])
@@ -276,7 +292,8 @@ class OptionsMenu extends MusicBeatState
 								100,
 								0, 
 								0,
-								0.0475
+								0.0475,
+								"default"
 							];
 							
 							Settings.Init(true);
@@ -307,7 +324,8 @@ class OptionsMenu extends MusicBeatState
 									100,
 									0, //Judgement delay (in ms)
 									0, //Visual delay (in ms)
-									0.0475
+									0.0475,
+									"default"
 								];
 							case 1:
 								Settings.BaseIndex = [
@@ -332,7 +350,8 @@ class OptionsMenu extends MusicBeatState
 									100,
 									0, //Judgement delay (in ms)
 									0, //Visual delay (in ms)
-									0.04
+									0.04,
+									"default"
 								];
 							case 2:
 								Settings.BaseIndex = [
@@ -357,7 +376,8 @@ class OptionsMenu extends MusicBeatState
 									100,
 									3, //Judgement delay (in ms)
 									3, //Visual delay (in ms)
-									0.0625
+									0.0625,
+									"default"
 								];
 							case 3:
 								Settings.BaseIndex = [
@@ -382,13 +402,14 @@ class OptionsMenu extends MusicBeatState
 									100,
 									0, //Judgement delay (in ms)
 									0, //Visual delay (in ms)
-									0
+									0,
+									"default"
 								];
 						}
 						Settings.Init(true);
 						Main.FrameShow.visible = Settings.Get("Show FPS");
 						Main.wm.poggars = "Isaac Mod Studios® Technologys";
-						Main.lmao.poggars = "http://BeatingChildren.cf";
+						Main.lmao.poggars = "https://BeatingChildren.cf";
 						FlxG.switchState(new OptionsMenu());
 				}
 			}
@@ -408,6 +429,13 @@ class OptionsMenu extends MusicBeatState
 					Infotxt.text = "";
 					
 					CurSel = 1;
+
+					if(prevSprite != null){
+						prevSprite.alpha = 0;
+						remove(prevSprite);
+						prevSprite = null;
+					}
+
 					changeSel(true);
 				}
 			}
@@ -486,16 +514,17 @@ class OptionsMenu extends MusicBeatState
 	
 	function GameplayM()
 	{
-		Setings = ['Downscroll', 'Show HUD', 'BotPlay', 'Ghost Tapping', 'Better Accuracy', 'Miss Health Loss'];
+		Setings = ['Downscroll', 'Show HUD', 'BotPlay', 'Ghost Tapping', 'Better Accuracy', 'Miss Health Loss', 'Note Skin'];
 		Desc = [
 		'Makes the notes go down instead of up. C\'mon you know this already',
 		'When unchecked, the game hides the time text and stats',
 		'Plays for you :)',
 		'When you press a key in the game, you won\'t recieve a miss. Unless unchecked',
 		'Uses the better accuracy system. (Slightly more memory intensive!)',
-		'How much health you lose after missing a note.'
+		'How much health you lose after missing a note.',
+		'Well... it skins the notes.',
 		];
-		BS = [true, true, true, true, true, false];
+		BS = [true, true, true, true, true, false, false];
 		
 		for (i in 0...Setings.length){
 			var TempO:Alphabet = new Alphabet(0, 0, Setings[i], true, false);
@@ -505,7 +534,16 @@ class OptionsMenu extends MusicBeatState
 
 			if (Setings[i] == "Miss Health Loss"){
 				TempO.changeText("Miss Health Loss " + Std.int(Settings.Get('Miss Health Loss') * 10000) / 100);
+			} else if(Setings[i] == "Note Skin"){
+				TempO.changeText("Note Skin " + Settings.Get('Note Skin'));
 			}
+
+			prevSprite = new FlxSprite(FlxG.width - 600, -370).loadGraphic(Paths.noteSkin(Settings.Get('Note Skin'))[2]);
+			prevSprite.antialiasing = Settings.Get('Antialiasing');
+			prevSprite.scale.x = 0.6;
+			prevSprite.scale.y = 0.6;
+			prevSprite.alpha = 0;
+			add(prevSprite);
 			
 			if(BS[i]){
 				var ChkBx:FlxSprite = new FlxSprite();

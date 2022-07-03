@@ -29,9 +29,11 @@ class Paths
 	public static var customSoundsLoaded:Map<String, Sound> = new Map();
 	#else
 	public static var ignoreModFolders:Map<String, Bool> = new Map<String, Bool>();
-	public static var customImagesLoaded:Map<String, Bool> = new Map<String, Bool>();
 	public static var customSoundsLoaded:Map<String, Sound> = new Map<String, Sound>();
 	#end
+	#end
+	#if !html5
+	public static var customImagesLoaded:Map<String, Bool> = new Map<String, Bool>();
 	#end
 
 	public static function destroyLoadedImages(ignoreCheck:Bool = false) {
@@ -81,6 +83,7 @@ class Paths
 
 		if (currentLevel != null)
 		{
+			trace('megor shart');
 			var levelPath:String = '';
 			if(currentLevel != 'shared') {
 				levelPath = getLibraryPathForce(file, currentLevel);
@@ -91,9 +94,67 @@ class Paths
 			levelPath = getLibraryPathForce(file, "shared");
 			if (OpenFlAssets.exists(levelPath, type))
 				return levelPath;
+
+			trace('no so megorshart');
 		}
 
 		return getPreloadPath(file);
+	}
+
+	/*public static function getPath2(file:String, type:AssetType, ?library:Null<String> = null)
+	{
+		var currentLevel2:String = "";
+
+		if (currentLevel2 != null)
+		{
+			var levelPath:String = '';
+			if(currentLevel2 != 'shared') {
+				levelPath = getLibraryPathForce(file, currentLevel2);
+				if (OpenFlAssets.exists(levelPath, type))
+					return levelPath;
+			}
+
+			levelPath = getLibraryPathForce(file, "shared");
+			if (OpenFlAssets.exists(levelPath, type))
+				return levelPath;
+		}
+
+		return getPreloadPath(file);
+	}*/
+
+	public static function getNoteSkins(){
+		var skinsArr:Array<String> = [];
+
+		skinsArr.push('default');
+
+		for(moreSkins in Assets.getText('assets/skins/skinList.txt').split('\n')){
+			if(moreSkins != "" && !moreSkins.startsWith('#')){
+				skinsArr.push(makeShiftReplace(moreSkins).trim()); //<--- you do not know how much pain this has caused me. And all I needed to add with .trim()
+			}
+		}
+
+		return skinsArr;
+	}
+	
+	static var XMLindex:Array<String> = [];
+	static var XMLdata:Array<String> = [];
+
+	public static function initXMLData(){
+		var build:String = "";
+
+		for(dat in Assets.getText('assets/skins/AssetData.xml').split('\n')){
+			if(dat != ""){
+				if(!dat.startsWith('#')){
+					build += dat.trim();
+				} else {
+					XMLindex.push(dat.split(':::>>>')[1].split('<<<')[0]);
+					if(build != '')
+						XMLdata.push(build);
+
+					build = '';
+				}
+			}
+		}
 	}
 
 	static public function getLibraryPath(file:String, library = "preload")
@@ -159,6 +220,64 @@ class Paths
 		}
 		#end
 		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
+	}
+
+	public static function makeShiftReplace(input:String, first:String = '-', second:String = ' '){ //i guess haxes replace is broken af or something????
+		var dumbestFixOnEarth = input.split(first);
+
+		var fixPls = "";
+		for(i in 0...dumbestFixOnEarth.length){
+			fixPls += dumbestFixOnEarth[i] + (i == dumbestFixOnEarth.length - 1 ? '' : second);
+		}
+
+		return fixPls;
+	}
+
+	public static var includedSkins:Array<Dynamic> = [
+		'default',
+	];
+
+	static public function noteSkin(key:String):Array<Dynamic>
+	{
+		//so pretty much, for some weird reason hax REALLY doesn't like replace()???? so I have to use this overly complex fix WTF?
+
+		var fakay = makeShiftReplace(key, ' ', '-');
+
+		//if(!customImagesLoaded.exists(fakeKey)){
+		//	fakay = addCustomGraphic(fakeKey, true);
+		//}
+
+		var broWhy:Bool = false;
+
+		for(lmao in includedSkins){
+			if(lmao == fakay)
+				broWhy = true;
+		}
+
+		var dumbXMLdata:String = "";
+		for(i in 0...XMLdata.length){
+			if(XMLindex[i] == fakay)
+				dumbXMLdata = XMLdata[i];
+		}
+
+		if(!broWhy){
+			var assetsIm:FlxGraphic = addCustomGraphic(fakay, 'NOTE_assets.png');
+			var previewPng:FlxGraphic   = addCustomGraphic(fakay, 'Preview.png');
+
+			return [
+				assetsIm,
+				dumbXMLdata,
+				previewPng
+			];
+		}
+
+		trace('SA!');
+
+		return [
+			'assets/skins/' + fakay + '/NOTE_assets.png',
+			dumbXMLdata,
+			'assets/skins/' + fakay + '/Preview.png'
+		];
 	}
 	
 	inline static public function soundRandom(key:String, min:Int, max:Int, ?library:String)
@@ -297,21 +416,27 @@ class Paths
 		return path.toLowerCase().replace(' ', '-');
 	}
 	
-	#if MODS_ALLOWED
-	static public function addCustomGraphic(key:String):FlxGraphic {
-		if(FileSystem.exists(modsImages(key))) {
-			if(!customImagesLoaded.exists(key)) {
-				var newBitmap:BitmapData = BitmapData.fromFile(modsImages(key));
-				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
+	#if !html5
+	static public function addCustomGraphic(key:String, fold:String):FlxGraphic 
+	{
+		if(FileSystem.exists('assets/skins/' + key + '/' + fold)) {
+			if(!customImagesLoaded.exists(key + fold)) {
+				trace('PLEASE DONT LOAD THIS ONE AGAIN!!!!!!');
+				var newBitmap:BitmapData = BitmapData.fromFile('assets/skins/' + key + '/' + fold);
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key + fold);
 				newGraphic.persist = true;
+
+				trace(key + fold);
+
 				FlxG.bitmap.addGraphic(newGraphic);
-				customImagesLoaded.set(key, true);
+				customImagesLoaded.set(key + fold, true);
 			}
-			return FlxG.bitmap.get(key);
+			return FlxG.bitmap.get(key + fold);
 		}
 		return null;
 	}
-
+	#end
+	/*
 	inline static public function mods(key:String = '') {
 		return 'mods/' + key;
 	}
@@ -357,5 +482,6 @@ class Paths
 		}
 		return 'mods/' + key;
 	}
-	#end
+	*/
+	//#end
 }

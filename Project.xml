@@ -41,6 +41,7 @@
 	<classpath name="source" />
 
 	<assets path="assets/images" />
+	<assets path="assets/skins" />
 	<assets path="assets/data" />
 	<assets path='example_mods' rename='mods' embed='false'/>
 	<!-- <template path='mods' /> -->

@@ -22,7 +22,11 @@ This is Round Engine! A new engine for friday night funkin'.
 
 9. Option presets for different people.
 
-10 (NEW!). Allows changing the amount of health lost by missing a note.
+10. Allows changing the amount of health lost by missing a note.
+
+11 (new!). Allows custom note addable note skins.
+
+12 (new!). Change a bit of strum animations.  
 
 # Charting Features
 

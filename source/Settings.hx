@@ -26,7 +26,8 @@ class Settings {
 		"Start Volume",
 		"Input Delay",
 		"Visual Delay",
-		"Miss Health Loss"
+		"Miss Health Loss",
+		"Note Skin"
 	];
 	
 	private static var Index:Array<Dynamic> = [
@@ -51,7 +52,8 @@ class Settings {
 		100,
 		0, //Judgement delay (in ms)
 		0, //Visual delay (in ms)
-		0.04
+		0.04,
+		"default"
 	];
 	
 	public static var BaseIndex:Array<Dynamic> = [
@@ -76,7 +78,8 @@ class Settings {
 		100,
 		0, //Judgement delay (in ms)
 		0, //Visual delay (in ms)
-		0.04
+		0.04,
+		"default"
 	];
 	
 	public static function Init(Reset:Bool = false)
